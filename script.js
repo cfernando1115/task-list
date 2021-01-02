@@ -12,7 +12,7 @@ var getTasks=function(){
         return response.json();
     })
     .then(data=>{
-        let tasks=data;
+        tasks=data;
         tasks.forEach((el)=>{
             tasks[el.key]=el.value;
         })
@@ -27,7 +27,7 @@ window.onload=function(){
         renderTasks(tasks);
     }
     else{
-        tasks=getTasks()
+        getTasks()
             .then(tasks=>{
                 renderTasks(tasks);
                 let data=JSON.stringify(tasks);
@@ -43,11 +43,11 @@ const renderTasks=function(tasks){
             <tr>
                 <td><input name="complete" type="checkbox" value="${el.info}" ${el.status?'checked':''}></td>
                 <td>${el.info}</td>
-                <td><input name="delete" type="checkbox"></td>
+                <td><input name="delete" value="${el.info}" type="checkbox"></td>
             </tr>
         `
     });
-    taskTable.insertAdjacentHTML('beforeend',html);
+    taskTable.innerHTML=html;
     addChangeEvent();
 }
 
@@ -56,58 +56,34 @@ const saveSession=function(data){
 }
 
 const addChangeEvent=function(){
-    var completeBoxes=document.querySelectorAll("input[name=complete]");
+    var completeBoxes=document.querySelectorAll("input[name='complete']");
+    var deleteBoxes=document.querySelectorAll("input[name='delete']");
     completeBoxes.forEach(el=>{
         el.onchange=updateData;
+    })
+    deleteBoxes.forEach(el=>{
+        el.onchange=deleteData;
     })
 }
 
 const updateData=function(event){
     var curTask=event.target.value;
-    tasks.forEach(el=>{
-        if(el.info==curTask){
-            el.status=event.target.checked;
-        }
-    })
+    var task=tasks.find(el=>el.info===curTask);
+    task.status=event.target.checked;
     let data=JSON.stringify(tasks);
     saveSession(data);
 }
 
+const deleteData=function(event){
+    var curTask=event.target.value;
+    var index=tasks.findIndex(el=>el.info===curTask);
+    tasks.splice(index,1);
+    let data=JSON.stringify(tasks);
+    saveSession(data);
+    renderTasks(tasks);
+}
 
 
-        /*var myForm=document.getElementById('myForm');
-        var output=document.getElementById('output');
 
-
-        window.onload=function(){
-            if(window.sessionStorage){
-                var person=JSON.parse(sessionStorage['person']);
-                var message=`<h2>Welcome back ${person.first} ${person.last}!</h2>`;
-                output.insertAdjacentHTML('afterbegin', message);
-            }
-        }
-
-        myForm.addEventListener('submit', function(e){
-            e.preventDefault();
-            var data=formData(myForm);
-            if(data){
-                /***********
-                 * Store Values As String
-                 ************/
-
-                /*//convert object to JSON
-                var myJson=JSON.stringify(data);
-                //put in session storage
-                sessionStorage.setItem('person',myJson);
-            }
-        })
-
-        var formData=function(form){
-            var el=document.querySelectorAll('input[type="text"],input[type="email"]');
-            //Create new object to store input
-            var myData={};
-            el.forEach(el=>{
-                myData[el.name]=el.value;  
-            })
-            return myData;
-        }*/
+//Add form for inputting new tasks
+//Styling
