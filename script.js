@@ -1,4 +1,5 @@
 const taskTable=document.getElementsByTagName("tbody")[0];
+let tasks;
 
 
 var getTasks=function(){
@@ -22,34 +23,17 @@ var getTasks=function(){
 
 window.onload=function(){
     if(sessionStorage['data']){
-        let tasks=JSON.parse(sessionStorage['data']);
-        //render tasks
+        tasks=JSON.parse(sessionStorage['data']);
         renderTasks(tasks);
     }
     else{
-        getTasks()
+        tasks=getTasks()
             .then(tasks=>{
                 renderTasks(tasks);
                 let data=JSON.stringify(tasks);
-                //move to save function...
                 saveSession(data);
             });
     }
-    var completeBox=document.querySelectorAll("input[name=complete]");
-    completeBox.forEach(el=>{
-        el.addEventListener('change',function(){
-            el.hasAttribute('checked')?el.removeAttribute('checked'):el.setAttribute('checked','checked');
-            //(el.getAttribute('value'))?el.setAttribute('value','false'):el.setAttribute('value','true');
-            let status=el.getAttribute('value');
-            if(status=='true'){
-                el.setAttribute('value','false');
-            }
-            else{
-                el.setAttribute('value','true');
-            }
-            console.log(el.getAttribute('value'));
-        })
-    })
 }
 
 const renderTasks=function(tasks){
@@ -57,17 +41,36 @@ const renderTasks=function(tasks){
     tasks.forEach((el)=>{
         html+=`
             <tr>
-                <td><input name="complete" type="checkbox" value="${el.checked?'true':'false'}" ${el.status?'checked':''}></td>
+                <td><input name="complete" type="checkbox" value="${el.info}" ${el.status?'checked':''}></td>
                 <td>${el.info}</td>
                 <td><input name="delete" type="checkbox"></td>
             </tr>
         `
     });
     taskTable.insertAdjacentHTML('beforeend',html);
+    addChangeEvent();
 }
 
 const saveSession=function(data){
     sessionStorage.setItem('data', data);
+}
+
+const addChangeEvent=function(){
+    var completeBoxes=document.querySelectorAll("input[name=complete]");
+    completeBoxes.forEach(el=>{
+        el.onchange=updateData;
+    })
+}
+
+const updateData=function(event){
+    var curTask=event.target.value;
+    tasks.forEach(el=>{
+        if(el.info==curTask){
+            el.status=event.target.checked;
+        }
+    })
+    let data=JSON.stringify(tasks);
+    saveSession(data);
 }
 
 
