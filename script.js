@@ -1,5 +1,14 @@
 const taskTable=document.getElementsByTagName("tbody")[0];
 let tasks;
+const taskForm=document.querySelector('#task-form');
+
+taskForm.addEventListener('submit', function(){
+    var taskInfo=document.getElementById('task-input').value;
+    if(taskInfo==''){
+        return alert('please enter a task');
+    }
+    addTask(taskInfo);
+});
 
 
 var getTasks=function(){
@@ -11,14 +20,16 @@ var getTasks=function(){
         }
         return response.json();
     })
-    .then(data=>{
+    .catch(err=>new Error(err));
+    /*.then(data=>{
         tasks=data;
-        tasks.forEach((el)=>{
-            tasks[el.key]=el.value;
-        })
+        console.log(tasks);
+        //tasks.forEach((el)=>{
+            //tasks[el.key]=el.value;
+        //})
         return tasks;
-    })
-    .catch(err=>console.log(err));
+    })*/
+    //.catch(err=>console.log(err));
 }
 
 window.onload=function(){
@@ -28,7 +39,8 @@ window.onload=function(){
     }
     else{
         getTasks()
-            .then(tasks=>{
+            .then(info=>{
+                tasks=info;
                 renderTasks(tasks);
                 let data=JSON.stringify(tasks);
                 saveSession(data);
@@ -38,15 +50,16 @@ window.onload=function(){
 
 const renderTasks=function(tasks){
     let html='';
-    tasks.forEach((el)=>{
+
+    for(var key in tasks){
         html+=`
             <tr>
-                <td><input name="complete" type="checkbox" value="${el.info}" ${el.status?'checked':''}></td>
-                <td>${el.info}</td>
-                <td><input name="delete" value="${el.info}" type="checkbox"></td>
+                <td><input name="complete" type="checkbox" value="${key}" ${tasks[key].status?'checked':''}></td>
+                <td>${tasks[key].info}</td>
+                <td><input name="delete" value="${key}" type="checkbox"></td>
             </tr>
         `
-    });
+    };
     taskTable.innerHTML=html;
     addChangeEvent();
 }
@@ -67,23 +80,27 @@ const addChangeEvent=function(){
 }
 
 const updateData=function(event){
-    var curTask=event.target.value;
-    var task=tasks.find(el=>el.info===curTask);
-    task.status=event.target.checked;
+    var key=event.target.value;
+    tasks[key].status=event.target.checked;
     let data=JSON.stringify(tasks);
     saveSession(data);
 }
 
 const deleteData=function(event){
-    var curTask=event.target.value;
-    var index=tasks.findIndex(el=>el.info===curTask);
-    tasks.splice(index,1);
+    var key=event.target.value;
+    tasks.splice(key,1);
     let data=JSON.stringify(tasks);
     saveSession(data);
     renderTasks(tasks);
 }
 
+const addTask=function(){
+    console.log('hi');
+}
+
+
 
 
 //Add form for inputting new tasks
 //Styling
+//Refactor
