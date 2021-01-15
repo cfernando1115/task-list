@@ -1,0 +1,112 @@
+body{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    color:rgb(41, 40, 40);
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+  }
+
+/***Background Image***/
+.background{
+    display:flex;
+    align-items:flex-start;
+    justify-content: center;
+    background-image: url(./img-pencilPaper.jpg);
+    background-repeat: no-repeat;
+    width:800px;
+    height:1000px;
+    background-size:contain;
+}
+
+/***All Content***/
+.data{
+    display:flex;
+    align-items:center;
+    justify-content: center;
+    flex-direction:column;
+    padding-right:60px;
+    margin-top:200px;
+}
+
+.data h2{
+    font-size: 200%;
+    margin-bottom:20px;
+}
+
+.data h2:after{
+    display:flex;
+    content:"";
+    background-color: black;
+    width:90px;
+    height:1px;
+}
+
+/***Task Table***/
+.tasks{ margin-bottom:50px; }
+
+tbody:before{
+    content:"";
+    display:flex;
+    height:10px;
+}
+
+th{ font-size:120%; }
+
+.tasks td{ font-family: 'Gochi Hand', cursive; }
+
+.tasks th,
+.tasks td{ padding-right:50px; }
+
+.tasks th:last-child,
+.tasks td:last-child{ padding-right:0; }
+
+/***New Task Form***/
+label{
+    font-size:120%;
+    margin-right:10px;
+}
+
+.task-input{
+    padding:5px;
+    border-radius:4px;
+    border: 1px solid rgb(223, 221, 221);
+    box-shadow:2px 2px 3px 2px #E0E9EE;
+}
+
+.task-btn{
+    margin-left:25px;
+    padding:4px;
+    border-radius:4px;
+    background-color: white;
+    border: 1px solid rgb(223, 221, 221);
+    box-shadow:2px 2px 3px 2px #E0E9EE;
+}
+
+.task-btn:hover,
+.task-btn:active{ background-color:rgb(245, 241, 241); }
+
+/***Mobile, Tablet***/
+@media only screen and (max-width: 600px) {
+    .background{
+        width:500px;
+        height:700px;
+    }
+    
+    .data{
+        padding-right:35px;
+        margin-top:150px;
+    }
+
+    .tasks th,
+    .tasks td{ padding-right:25px; }
+
+    label{ font-size:100%;}
+
+    .task-btn{ margin-left:15px; }
+  }
+

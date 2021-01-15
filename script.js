@@ -1,16 +1,18 @@
 const taskTable=document.getElementsByTagName("tbody")[0];
-let tasks;
 const taskForm=document.querySelector('#task-form');
+let tasks;
 
+//New task button
 taskForm.addEventListener('submit', function(){
     var taskInfo=document.getElementById('task-input').value;
     if(taskInfo==''){
         return alert('please enter a task');
     }
-    addTask(taskInfo);
+    addTask({"info":taskInfo, "status":false});
+    document.getElementById('task-input').value='';
 });
 
-
+//Fetch original tasks from api
 var getTasks=function(){
     return fetch('http://discoveryvip.com/shared/json.php?f=list')
     .then(response=>{
@@ -21,17 +23,9 @@ var getTasks=function(){
         return response.json();
     })
     .catch(err=>new Error(err));
-    /*.then(data=>{
-        tasks=data;
-        console.log(tasks);
-        //tasks.forEach((el)=>{
-            //tasks[el.key]=el.value;
-        //})
-        return tasks;
-    })*/
-    //.catch(err=>console.log(err));
 }
 
+//Check for sessionStorage
 window.onload=function(){
     if(sessionStorage['data']){
         tasks=JSON.parse(sessionStorage['data']);
@@ -42,65 +36,73 @@ window.onload=function(){
             .then(info=>{
                 tasks=info;
                 renderTasks(tasks);
-                let data=JSON.stringify(tasks);
-                saveSession(data);
+                saveSession(tasks);
             });
     }
 }
 
-const renderTasks=function(tasks){
-    let html='';
-
-    for(var key in tasks){
-        html+=`
-            <tr>
-                <td><input name="complete" type="checkbox" value="${key}" ${tasks[key].status?'checked':''}></td>
-                <td>${tasks[key].info}</td>
-                <td><input name="delete" value="${key}" type="checkbox"></td>
-            </tr>
-        `
-    };
-    taskTable.innerHTML=html;
-    addChangeEvent();
+//Task table building
+const buildTask=function(key, task){
+    const tr=document.createElement('tr');
+    const tdComplete=document.createElement('td');
+    const tdInfo=document.createElement('td');
+    const tdDelete=document.createElement('td');
+    const statusInput=document.createElement('input');
+    const deleteInput=document.createElement('input');
+    const textInside=document.createTextNode(task.info);
+    statusInput.name='complete';
+    statusInput.type='checkbox';
+    statusInput.checked=task.status;
+    statusInput.value=key;
+    statusInput.onchange=updateData;
+    deleteInput.name='delete';
+    deleteInput.type='checkbox';
+    deleteInput.value=key;
+    deleteInput.onchange=deleteData;
+    tdComplete.appendChild(statusInput);
+    tdInfo.appendChild(textInside);
+    tdDelete.appendChild(deleteInput);
+    tr.appendChild(tdComplete);
+    tr.appendChild(tdInfo);
+    tr.appendChild(tdDelete);
+    taskTable.appendChild(tr);
 }
 
-const saveSession=function(data){
+//Build multiple tasks (on initial load, on task delete)
+const renderTasks=function(tasks){
+
+    for(var key in tasks){
+        buildTask(key, tasks[key]);
+    };
+}
+
+//Add and build single task from input field
+const addTask=function(taskInfo){
+    buildTask(tasks.length, taskInfo);
+    tasks.push(taskInfo);
+    saveSession(tasks);
+}
+
+//Save to sessionStorage
+const saveSession=function(tasks){
+    let data=JSON.stringify(tasks);
     sessionStorage.setItem('data', data);
 }
 
-const addChangeEvent=function(){
-    var completeBoxes=document.querySelectorAll("input[name='complete']");
-    var deleteBoxes=document.querySelectorAll("input[name='delete']");
-    completeBoxes.forEach(el=>{
-        el.onchange=updateData;
-    })
-    deleteBoxes.forEach(el=>{
-        el.onchange=deleteData;
-    })
-}
-
+//When status checked/unchecked
 const updateData=function(event){
     var key=event.target.value;
     tasks[key].status=event.target.checked;
-    let data=JSON.stringify(tasks);
-    saveSession(data);
+    saveSession(tasks);
 }
 
+//When task deleted
 const deleteData=function(event){
     var key=event.target.value;
     tasks.splice(key,1);
-    let data=JSON.stringify(tasks);
-    saveSession(data);
+    saveSession(tasks);
+    taskTable.innerHTML='';
     renderTasks(tasks);
 }
 
-const addTask=function(){
-    console.log('hi');
-}
 
-
-
-
-//Add form for inputting new tasks
-//Styling
-//Refactor

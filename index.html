@@ -2,38 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <meta name="description" content="An interactive to-do list">
+    <title>To-Do List</title>
     <script defer type="text/javascript" src="script.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h2>Task List</h2>
-    <table class="tasks" id="tasks-table">
-        <thead>
-            <tr>
-                <th>
-                    Status
-                </th>
-                <th>
-                    Task
-                </th>
-                <th>
-                    Delete
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <!--<tr>
-                <td><input name="complete" type="checkbox"></td>
-                <td>Cut Grass</td>
-                <td><input name="delete" type="checkbox"></td>
-            </tr>-->
-        </tbody>
-    </table><br>
-    <form id="task-form" onsubmit="return false">
-        <label for="task-input">Task Name: </label>
-        <input type="text" id="task-input" placeholder="enter task">
-        <input type="submit" class="task-btn" value="Add Task">
-    </form>
+    <div>
+        <div class="background">
+            <div  class="data">
+                <h2>To-Do</h2>
+                <table class="tasks" id="tasks-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Status
+                            </th>
+                            <th>
+                                Task
+                            </th>
+                            <th>
+                                Delete
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!--<tr>
+                            <td><input name="complete" type="checkbox"></td>
+                            <td>Cut Grass</td>
+                            <td><input name="delete" type="checkbox"></td>
+                        </tr>-->
+                    </tbody>
+                </table><br>
+                <form class="task-form" id="task-form" onsubmit="return false">
+                    <label for="task-input">Task Name: </label>
+                    <input type="text" class="task-input" id="task-input" placeholder="enter task">
+                    <input type="submit" class="task-btn" value="Add Task">
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
